@@ -1,5 +1,5 @@
 // Cấu hình link tải - CẬP NHẬT LINK TẢI Ở ĐÂY
-const DOWNLOAD_LINK = 'https://your-download-link-here.com/vietcnc-installer.exe';
+const DOWNLOAD_LINK = 'https://drive.google.com/file/d/1_xhCJ9WJcvLtcvuKzC8DfsRw1Xw5ZTVo/view?usp=sharing';
 
 // Xử lý sự kiện click nút tải
 document.addEventListener('DOMContentLoaded', function() {
@@ -9,13 +9,19 @@ document.addEventListener('DOMContentLoaded', function() {
         downloadBtn.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Thay đổi link tải ở đây
-            window.location.href = DOWNLOAD_LINK;
-            
-            // Hoặc mở trong tab mới
-            // window.open(DOWNLOAD_LINK, '_blank');
+            // Mở link Google Drive trong tab mới
+            window.open(DOWNLOAD_LINK, '_blank');
         });
     }
+    
+    // Xử lý các nút "Tải plugin về" trong bảng giá
+    const pricingBtns = document.querySelectorAll('.btn-pricing');
+    pricingBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.open(DOWNLOAD_LINK, '_blank');
+        });
+    });
     
     // Smooth scroll cho các link anchor
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
