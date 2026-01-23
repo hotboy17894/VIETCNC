@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <path d="M 8 32 L 13 18 L 18 32 Z" fill="#3B82F6" stroke="#2563EB" stroke-width="1.5"/>
+  <path d="M 18 32 L 24 18 L 30 32 Z" fill="#FF6B8A" stroke="#EC4899" stroke-width="1.5"/>
+  <path d="M 30 32 L 36 18 L 42 32 Z" fill="#3B82F6" stroke="#2563EB" stroke-width="1.5"/>
+  <line x1="8" y1="32" x2="42" y2="32" stroke="#3B82F6" stroke-width="3"/>
+</svg>

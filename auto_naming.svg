@@ -1,0 +1,6 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M42.82 23.16l-18-18C24.1 4.44 23.1 4 22 4H8c-2.2 0-4 1.8-4 4v14c0 1.1.44 2.1 1.18 2.84l18 18c.72.72 1.72 1.16 2.82 1.16 1.1 0 2.1-.44 2.82-1.18l14-14c.74-.72 1.18-1.72 1.18-2.82 0-1.1-.46-2.12-1.18-2.84z" fill="#FF6B35"/>
+  <circle cx="13" cy="13" r="3" fill="white"/>
+  <text x="28" y="32" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white">A</text>
+  <text x="34" y="32" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">1</text>
+</svg>
