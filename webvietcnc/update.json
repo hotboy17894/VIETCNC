@@ -1,12 +1,9 @@
 {
-  "version": "3.2.5",
+  "version": "3.2.6",
   "release_date": "2026-01-25",
   "download_url": "https://raw.githubusercontent.com/hotboy17894/VIETCNC/main/webvietcnc/vietcnc.rbz",
   "changelog": [
-    "Sửa lỗi decode license key",
-    "Thêm auto-check license khi khởi động",
-    "Tối ưu tốc độ kiểm tra license",
-    "Giảm timeout API xuống 3 giây"
+    "không cần biết"
   ],
   "min_sketchup_version": "2021",
   "max_sketchup_version": "2025"
