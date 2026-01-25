@@ -1,5 +1,5 @@
 // Cấu hình link tải - CẬP NHẬT LINK TẢI Ở ĐÂY
-const DOWNLOAD_LINK = 'https://drive.google.com/file/d/1_xhCJ9WJcvLtcvuKzC8DfsRw1Xw5ZTVo/view?usp=sharing';
+const DOWNLOAD_LINK = 'https://raw.githubusercontent.com/hotboy17894/VIETCNC/main/webvietcnc/vietcnc.rbz';
 
 // Xử lý sự kiện click nút tải
 document.addEventListener('DOMContentLoaded', function() {
@@ -64,3 +64,4 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(el);
     });
 });
+
