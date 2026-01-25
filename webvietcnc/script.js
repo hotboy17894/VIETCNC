@@ -1,5 +1,5 @@
 // Cấu hình link tải - CẬP NHẬT LINK TẢI Ở ĐÂY
-const DOWNLOAD_LINK = 'https://your-download-link-here.com/vietcnc-installer.exe';
+const DOWNLOAD_LINK = 'https://raw.githubusercontent.com/hotboy17894/VIETCNC/main/webvietcnc/vietcnc.rbz';
 
 // Xử lý sự kiện click nút tải
 document.addEventListener('DOMContentLoaded', function() {
