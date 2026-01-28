@@ -11,7 +11,14 @@ function formatDate(dateString) {
 // Hàm tải thông tin version từ update.json
 async function loadVersionInfo() {
     try {
-        const response = await fetch(UPDATE_JSON_URL);
+        // Thêm timestamp để tránh cache
+        const timestamp = new Date().getTime();
+        const response = await fetch(`${UPDATE_JSON_URL}?t=${timestamp}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         
         // Cập nhật version
@@ -36,11 +43,29 @@ async function loadVersionInfo() {
         console.log('✓ Đã tải thông tin version:', data.version);
     } catch (error) {
         console.error('Lỗi khi tải thông tin version:', error);
-        // Nếu lỗi, hiển thị thông tin mặc định
+        
+        // Nếu lỗi, hiển thị thông tin mặc định từ update.json local
         const versionElement = document.getElementById('current-version');
         const dateElement = document.getElementById('release-date');
-        if (versionElement) versionElement.textContent = '3.2.6';
-        if (dateElement) dateElement.textContent = '28/01/2026';
+        
+        // Thử đọc từ file local
+        fetch('update.json')
+            .then(res => res.json())
+            .then(data => {
+                if (versionElement) versionElement.textContent = data.version;
+                if (dateElement) {
+                    dateElement.textContent = formatDate(data.release_date);
+                    dateElement.setAttribute('datetime', data.release_date);
+                }
+            })
+            .catch(() => {
+                // Nếu vẫn lỗi, dùng giá trị mặc định
+                if (versionElement) versionElement.textContent = '3.2.6';
+                if (dateElement) {
+                    dateElement.textContent = '28/01/2026';
+                    dateElement.setAttribute('datetime', '2026-01-28');
+                }
+            });
     }
 }
 
