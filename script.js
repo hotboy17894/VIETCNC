@@ -1,27 +1,67 @@
 // Cấu hình link tải - CẬP NHẬT LINK TẢI Ở ĐÂY
 const DOWNLOAD_LINK = 'https://raw.githubusercontent.com/hotboy17894/VIETCNC/main/webvietcnc/vietcnc.rbz';
+const UPDATE_JSON_URL = 'https://raw.githubusercontent.com/hotboy17894/VIETCNC/main/webvietcnc/update.json';
+
+// Hàm chuyển đổi ngày từ YYYY-MM-DD sang DD/MM/YYYY
+function formatDate(dateString) {
+    const parts = dateString.split('-');
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+// Hàm tải thông tin version từ update.json
+async function loadVersionInfo() {
+    try {
+        const response = await fetch(UPDATE_JSON_URL);
+        const data = await response.json();
+        
+        // Cập nhật version
+        const versionElement = document.getElementById('current-version');
+        if (versionElement) {
+            versionElement.textContent = data.version;
+        }
+        
+        // Cập nhật ngày
+        const dateElement = document.getElementById('release-date');
+        if (dateElement) {
+            dateElement.textContent = formatDate(data.release_date);
+            dateElement.setAttribute('datetime', data.release_date);
+        }
+        
+        // Cập nhật aria-label của nút download
+        const downloadBtn = document.getElementById('downloadBtn');
+        if (downloadBtn) {
+            downloadBtn.setAttribute('aria-label', `Tải xuống VietCNC phiên bản ${data.version}`);
+        }
+        
+        console.log('✓ Đã tải thông tin version:', data.version);
+    } catch (error) {
+        console.error('Lỗi khi tải thông tin version:', error);
+        // Nếu lỗi, hiển thị thông tin mặc định
+        const versionElement = document.getElementById('current-version');
+        const dateElement = document.getElementById('release-date');
+        if (versionElement) versionElement.textContent = '3.2.6';
+        if (dateElement) dateElement.textContent = '28/01/2026';
+    }
+}
 
 // Xử lý sự kiện click nút tải
 document.addEventListener('DOMContentLoaded', function() {
+    // Tải thông tin version
+    loadVersionInfo();
+    
     const downloadBtn = document.getElementById('downloadBtn');
     
     if (downloadBtn) {
         downloadBtn.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Mở link Google Drive trong tab mới
-            window.open(DOWNLOAD_LINK, '_blank');
+            // Thay đổi link tải ở đây
+            window.location.href = DOWNLOAD_LINK;
+            
+            // Hoặc mở trong tab mới
+            // window.open(DOWNLOAD_LINK, '_blank');
         });
     }
-    
-    // Xử lý các nút "Tải plugin về" trong bảng giá
-    const pricingBtns = document.querySelectorAll('.btn-pricing');
-    pricingBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            window.open(DOWNLOAD_LINK, '_blank');
-        });
-    });
     
     // Smooth scroll cho các link anchor
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -64,4 +104,3 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(el);
     });
 });
-
