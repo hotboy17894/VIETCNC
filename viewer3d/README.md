@@ -15,4 +15,4 @@ Chức năng xem 3D model trực tiếp trên web.
 ✅ Xoay 360°, zoom, chụp ảnh
 ✅ Responsive (mobile-friendly)
 
-## Cập nhật: 2026-03-05 22:56:41
+## Cập nhật: 2026-03-05 23:14:43

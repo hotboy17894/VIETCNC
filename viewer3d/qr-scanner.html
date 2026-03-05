@@ -146,11 +146,7 @@
         <h1>📷 Quét QR Code</h1>
         <p class="subtitle">Hướng camera vào mã QR để xem 3D model</p>
         
-        <div class="camera-select">
-            <select id="cameraSelect">
-                <option value="">Chọn camera...</option>
-            </select>
-        </div>
+
         
         <div id="video-container" style="display:none;">
             <video id="video" autoplay playsinline></video>
@@ -188,50 +184,15 @@
         let ctx = canvas.getContext('2d');
         let scanning = false;
         let stream = null;
-        let cameras = [];
-
-        // Lấy danh sách cameras
-        async function getCameras() {
-            try {
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                cameras = devices.filter(device => device.kind === 'videoinput');
-                
-                const select = document.getElementById('cameraSelect');
-                select.innerHTML = '<option value="">Chọn camera...</option>';
-                
-                cameras.forEach((camera, index) => {
-                    const option = document.createElement('option');
-                    option.value = camera.deviceId;
-                    option.text = camera.label || `Camera ${index + 1}`;
-                    select.appendChild(option);
-                });
-                
-                // Tự động chọn camera sau (thường là camera chính)
-                if (cameras.length > 0) {
-                    const backCamera = cameras.find(c => c.label.toLowerCase().includes('back')) || cameras[cameras.length - 1];
-                    select.value = backCamera.deviceId;
-                }
-            } catch (err) {
-                console.error('Lỗi lấy danh sách camera:', err);
-            }
-        }
 
         async function startScanning() {
-            const selectedCamera = document.getElementById('cameraSelect').value;
-            
-            if (!selectedCamera) {
-                updateStatus('Vui lòng chọn camera!', 'error');
-                return;
-            }
-            
             try {
-                updateStatus('Đang mở camera...', 'info');
+                updateStatus('Đang yêu cầu quyền camera...', 'info');
                 
-                // Yêu cầu quyền truy cập camera
+                // Yêu cầu quyền truy cập camera (LUÔN hỏi user)
                 const constraints = {
                     video: {
-                        deviceId: selectedCamera ? { exact: selectedCamera } : undefined,
-                        facingMode: selectedCamera ? undefined : { ideal: 'environment' },
+                        facingMode: { ideal: 'environment' },
                         width: { ideal: 1280 },
                         height: { ideal: 720 }
                     }
@@ -352,9 +313,6 @@
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             updateStatus('Trình duyệt không hỗ trợ camera!', 'error');
             document.getElementById('startBtn').disabled = true;
-        } else {
-            // Lấy danh sách cameras khi trang load
-            getCameras();
         }
 
         // Dừng camera khi đóng trang
