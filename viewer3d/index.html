@@ -3,584 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Primary Meta Tags -->
-    <title>VietCNC - Plugin SketchUp Thiết Kế Nội Thất Gỗ Công Nghiệp | Phần Mềm CNC</title>
-    <meta name="title" content="VietCNC - Plugin SketchUp Thiết Kế Nội Thất Gỗ Công Nghiệp | Phần Mềm CNC">
-    <meta name="description" content="VietCNC là plugin SketchUp hỗ trợ thiết kế và sản xuất nội thất gỗ công nghiệp. 1000+ khách hàng và 50+ xưởng sản xuất tin dùng. Giá từ 100k/tháng. Tải ngay!">
-    <meta name="keywords" content="VietCNC, plugin sketchup, thiết kế nội thất, gỗ công nghiệp, phần mềm CNC, tủ bếp, nội thất gỗ, sketchup vietnam, plugin thiết kế">
-    <meta name="author" content="VietCNC">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://hotboy17894.github.io/VIETCNC/">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://hotboy17894.github.io/VIETCNC/">
-    <meta property="og:title" content="VietCNC - Plugin SketchUp Thiết Kế Nội Thất Gỗ Công Nghiệp">
-    <meta property="og:description" content="Plugin SketchUp hỗ trợ thiết kế và sản xuất nội thất gỗ công nghiệp. 1000+ khách hàng tin dùng. Giá từ 100k/tháng.">
-    <meta property="og:image" content="https://hotboy17894.github.io/VIETCNC/logo.svg">
-    <meta property="og:locale" content="vi_VN">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://hotboy17894.github.io/VIETCNC/">
-    <meta property="twitter:title" content="VietCNC - Plugin SketchUp Thiết Kế Nội Thất Gỗ Công Nghiệp">
-    <meta property="twitter:description" content="Plugin SketchUp hỗ trợ thiết kế và sản xuất nội thất gỗ công nghiệp. 1000+ khách hàng tin dùng.">
-    <meta property="twitter:image" content="https://hotboy17894.github.io/VIETCNC/logo.svg">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="logo.svg">
-    
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Structured Data - SoftwareApplication -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "VietCNC",
-      "applicationCategory": "DesignApplication",
-      "operatingSystem": "Windows",
-      "offers": {
-        "@type": "AggregateOffer",
-        "lowPrice": "100000",
-        "highPrice": "700000",
-        "priceCurrency": "VND"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "ratingCount": "1000"
-      },
-      "description": "Plugin SketchUp hỗ trợ thiết kế và sản xuất nội thất gỗ công nghiệp",
-      "softwareVersion": "3.2.3",
-      "datePublished": "2026-01-23",
-      "author": {
-        "@type": "Organization",
-        "name": "VietCNC"
-      }
-    }
-    </script>
-    
-    <!-- Structured Data - BreadcrumbList -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [{
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Trang chủ",
-        "item": "https://hotboy17894.github.io/VIETCNC/"
-      }]
-    }
-    </script>
-    
-    <!-- Google Analytics (thêm tracking ID của bạn) -->
-    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX');
-    </script> -->
+    <title>SketchUp 3D Viewer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #999;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .models {
+            display: grid;
+            gap: 15px;
+        }
+        .model-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .model-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            transition: left 0.5s;
+        }
+        .model-card:hover::before {
+            left: 100%;
+        }
+        .model-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        .model-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+        .model-code {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .model-info {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+        .model-info span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .badge {
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar" role="navigation" aria-label="Main navigation">
-            <div class="container">
-                <div class="nav-wrapper">
-                    <div class="logo">
-                        <img src="logo.svg" alt="VietCNC - Plugin SketchUp thiết kế nội thất gỗ">
-                    </div>
-                    <ul class="nav-menu">
-                        <li><a href="#features">Tính năng</a></li>
-                        <li><a href="#pricing">Bảng giá</a></li>
-                        <li><a href="#testimonials">Đánh giá</a></li>
-                        <li><a href="#download" class="btn-nav">Tải ngay</a></li>
-                    </ul>
-                    <button class="mobile-menu-toggle" aria-label="Toggle menu">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <main role="main">
-        <!-- Hero Section -->
-        <section class="hero" aria-labelledby="hero-title">
-            <div class="hero-background"></div>
-            <div class="container">
-                <div class="hero-content">
-                    <div class="hero-badge">🚀 Phiên bản mới nhất: <span id="hero-version">3.2.6</span></div>
-                    <h1 id="hero-title" class="hero-title">Plugin SketchUp Thiết Kế Nội Thất Chuyên Nghiệp</h1>
-                    <p class="hero-subtitle">Tăng năng suất gấp 10 lần với VietCNC - Công cụ thiết kế và sản xuất nội thất gỗ công nghiệp được 1000+ khách hàng và 50+ xưởng tin dùng</p>
-                    
-                    <div class="hero-buttons">
-                        <a href="#download" class="btn-hero primary" id="heroDownloadBtn">
-                            <span>Tải xuống miễn phí</span>
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M10 3V13M10 13L6 9M10 13L14 9M3 17H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                        <a href="#features" class="btn-hero secondary">Xem tính năng</a>
-                    </div>
-                    
-                    <div class="hero-stats">
-                        <div class="stat-item">
-                            <div class="stat-number">1000+</div>
-                            <div class="stat-label">Khách hàng</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">50+</div>
-                            <div class="stat-label">Xưởng sản xuất</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">4.8★</div>
-                            <div class="stat-label">Đánh giá</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Download Info Section -->
-        <section class="download-info" id="download">
-            <div class="container">
-                <div class="download-card">
-                    <div class="download-icon">
-                        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-                            <rect width="56" height="56" rx="14" fill="url(#gradient-download)"/>
-                            <path d="M28 20V32M28 32L24 28M28 32L32 28M20 36H36" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <defs>
-                                <linearGradient id="gradient-download" x1="0" y1="0" x2="56" y2="56">
-                                    <stop offset="0%" stop-color="#667eea"/>
-                                    <stop offset="100%" stop-color="#764ba2"/>
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                    </div>
-                    <div class="download-content">
-                        <h3>Tải phiên bản mới nhất</h3>
-                        <p class="version-info">
-                            Phiên bản: <strong id="current-version">Đang tải...</strong> • 
-                            Cập nhật: <time id="release-date" datetime="">Đang tải...</time>
-                        </p>
-                        <p class="download-note">Hỗ trợ Windows • SketchUp 2021-2025 • Miễn phí dùng thử</p>
-                    </div>
-                    <a href="https://raw.githubusercontent.com/hotboy17894/VIETCNC/main/webvietcnc/vietcnc.rbz" class="btn-download-main" id="downloadBtn">
-                        Tải xuống
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Why Choose Section -->
-        <section class="why-choose" aria-labelledby="why-choose-title">
-            <div class="container">
-                <h2 id="why-choose-title">Vì sao chọn VietCNC?</h2>
-                <p class="section-subtitle">Nâng cao năng suất lao động với chi phí đầu tư thấp.</p>
-                
-                <div class="features-grid">
-                    <article class="feature-card">
-                        <div class="feature-icon">
-                            <img src="setting.svg" alt="Sử dụng dễ dàng">
-                        </div>
-                        <h3>Sử dụng dễ dàng</h3>
-                        <p>Phần mềm dễ sử dụng, hiệu năng cao, nút bấm thân thiện và có hình xem trước trực quan. Mọi thao tác đều tối giản để bạn có thể bắt đầu sử dụng ngay mà không cần đọc hướng dẫn sử dụng.</p>
-                    </article>
-                    
-                    <article class="feature-card">
-                        <div class="feature-icon">
-                            <img src="rebuild.svg" alt="Cập nhật nhanh chóng">
-                        </div>
-                        <h3>Cập nhật nhanh chóng</h3>
-                        <p>Các bản cập nhật được tung ra thường xuyên, giúp phần mềm luôn ổn định và bắt kịp nhu cầu thực tế. Người dùng có thể theo dõi thông báo và cập nhật chỉ bằng một cú nhấp chuột.</p>
-                    </article>
-                    
-                    <article class="feature-card">
-                        <div class="feature-icon">
-                            <img src="door.svg" alt="Chi phí hợp lý">
-                        </div>
-                        <h3>Chi phí hợp lý</h3>
-                        <p>VietCNC cung cấp mô hình thành viên vĩnh viễn. Bạn chỉ cần trả tiền một lần. Không có chi phí ẩn. Không có gói dịch vụ phức tạp. Giá thành được tối ưu để phù hợp với mọi cá nhân và doanh nghiệp.</p>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <!-- Pricing Section -->
-        <section class="pricing" aria-labelledby="pricing-title">
-            <div class="container">
-                <h2 id="pricing-title">Bảng giá</h2>
-                <p class="section-subtitle">Chọn gói phù hợp với nhu cầu của bạn</p>
-                
-                <div class="pricing-grid">
-                    <article class="pricing-card">
-                        <div class="pricing-header">
-                            <h3>Gói 1 Tháng</h3>
-                            <div class="price">
-                                <span class="amount">100.000</span>
-                                <span class="currency">đ</span>
-                            </div>
-                            <p class="period">/ tháng</p>
-                        </div>
-                        <ul class="features-list">
-                            <li>✓ Đầy đủ tính năng</li>
-                            <li>✓ Cập nhật miễn phí</li>
-                            <li>✓ Hỗ trợ kỹ thuật</li>
-                            <li>✓ Sử dụng 1 máy</li>
-                        </ul>
-                        <a href="https://raw.githubusercontent.com/hotboy17894/VIETCNC/main/webvietcnc/vietcnc.rbz" class="btn-pricing" aria-label="Tải plugin VietCNC gói 1 tháng">Tải plugin về</a>
-                    </article>
-
-                    <article class="pricing-card featured">
-                        <div class="badge">Phổ biến</div>
-                        <div class="pricing-header">
-                            <h3>Gói 6 Tháng</h3>
-                            <div class="price">
-                                <span class="amount">400.000</span>
-                                <span class="currency">đ</span>
-                            </div>
-                            <p class="period">/ 6 tháng</p>
-                            <p class="save">Tiết kiệm 200.000đ</p>
-                        </div>
-                        <ul class="features-list">
-                            <li>✓ Đầy đủ tính năng</li>
-                            <li>✓ Cập nhật miễn phí</li>
-                            <li>✓ Hỗ trợ kỹ thuật ưu tiên</li>
-                            <li>✓ Sử dụng 1 máy</li>
-                        </ul>
-                        <a href="https://raw.githubusercontent.com/hotboy17894/VIETCNC/main/webvietcnc/vietcnc.rbz" class="btn-pricing" aria-label="Tải plugin VietCNC gói 6 tháng">Tải plugin về</a>
-                    </article>
-
-                    <article class="pricing-card">
-                        <div class="pricing-header">
-                            <h3>Gói 1 Năm</h3>
-                            <div class="price">
-                                <span class="amount">700.000</span>
-                                <span class="currency">đ</span>
-                            </div>
-                            <p class="period">/ năm</p>
-                            <p class="save">Tiết kiệm 500.000đ</p>
-                        </div>
-                        <ul class="features-list">
-                            <li>✓ Đầy đủ tính năng</li>
-                            <li>✓ Cập nhật miễn phí</li>
-                            <li>✓ Hỗ trợ kỹ thuật VIP</li>
-                            <li>✓ Sử dụng 1 máy</li>
-                        </ul>
-                        <a href="https://raw.githubusercontent.com/hotboy17894/VIETCNC/main/webvietcnc/vietcnc.rbz" class="btn-pricing" aria-label="Tải plugin VietCNC gói 1 năm">Tải plugin về</a>
-                    </article>
-                </div>
-
-                <p class="pricing-note">💡 Tất cả các gói đều bao gồm đầy đủ tính năng và cập nhật thường xuyên. Thanh toán một lần, không gia hạn tự động.</p>
-            </div>
-        </section>
-
-        <!-- Testimonials Section -->
-        <section class="testimonials" id="testimonials">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Khách hàng nói gì về VietCNC</h2>
-                    <p class="section-subtitle">Hơn 1000 khách hàng đã tin dùng và hài lòng</p>
-                </div>
-                
-                <div class="testimonials-grid">
-                    <article class="testimonial-card">
-                        <div class="testimonial-rating">★★★★★</div>
-                        <p class="testimonial-text">"VietCNC giúp tôi tiết kiệm được 70% thời gian thiết kế. Các tính năng rất trực quan và dễ sử dụng. Đầu tư xứng đáng!"</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">A</div>
-                            <div class="author-info">
-                                <div class="author-name">Anh Tuấn</div>
-                                <div class="author-title">Chủ xưởng nội thất</div>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="testimonial-card">
-                        <div class="testimonial-rating">★★★★★</div>
-                        <p class="testimonial-text">"Plugin tuyệt vời! Tính năng tạo mộng liên kết và khấu ván rất chính xác. Support team nhiệt tình, cập nhật thường xuyên."</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">M</div>
-                            <div class="author-info">
-                                <div class="author-name">Minh Hoàng</div>
-                                <div class="author-title">Thiết kế nội thất</div>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="testimonial-card">
-                        <div class="testimonial-rating">★★★★★</div>
-                        <p class="testimonial-text">"Từ khi dùng VietCNC, xưởng tôi tăng năng suất gấp đôi. Xuất file CNC chính xác, giảm thiểu sai sót. Rất đáng tiền!"</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">H</div>
-                            <div class="author-info">
-                                <div class="author-name">Hải Đăng</div>
-                                <div class="author-title">Giám đốc xưởng CNC</div>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <!-- Main Features Section -->
-        <section class="main-features" aria-labelledby="features-title">
-            <div class="container">
-                <h2 id="features-title">Tính năng nổi bật</h2>
-                <p class="section-subtitle">Một số tính năng hay được sử dụng nhất trong VietCNC.</p>
-                
-                <div class="features-list">
-                    <!-- Chức năng gốc ZSU -->
-                    <div class="feature-row">
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="make.svg" alt="Tạo ván">
-                            </div>
-                            <h3>Tạo ván</h3>
-                            <p>Tạo ván và chia không gian. Tạo ván từ các mặt hoặc đối tượng đang chọn, với độ dày, tách khe tùy chỉnh. Hỗ trợ tạo component và chia không gian nhanh.</p>
-                        </article>
-                        
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="door.svg" alt="Tạo cánh">
-                            </div>
-                            <h3>Tạo cánh</h3>
-                            <p>Tạo cánh tủ, mặt ngăn kéo. Tự động tính toán kích thước và vị trí bản lề. Hỗ trợ nhiều kiểu cánh khác nhau.</p>
-                        </article>
-                    </div>
-
-                    <div class="feature-row">
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="thickness.svg" alt="Thay đổi độ dày">
-                            </div>
-                            <h3>Thay đổi độ dày</h3>
-                            <p>Thay đổi độ dày ván hàng loạt. Không làm thay đổi kích thước bao. Hỗ trợ chế độ tương đối và tuyệt đối.</p>
-                        </article>
-                        
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="rebuild.svg" alt="Khôi phục ván">
-                            </div>
-                            <h3>Khôi phục ván</h3>
-                            <p>Khôi phục ván về hình dạng ban đầu. Loại bỏ tất cả các chỉnh sửa và trả về hình hộp cơ bản. Hỗ trợ chế độ giữ biên dạng gốc.</p>
-                        </article>
-                    </div>
-
-                    <div class="feature-row">
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="bevel.svg" alt="Bo góc ván">
-                            </div>
-                            <h3>Bo góc ván</h3>
-                            <p>Bo tròn hoặc vát vuông các góc ván. Hỗ trợ thay đổi kiểu bo góc và bán kính. Hỗ trợ chế độ tính segments tự động.</p>
-                        </article>
-                        
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="groove.svg" alt="Bào rãnh">
-                            </div>
-                            <h3>Bào rãnh đèn</h3>
-                            <p>Bào rãnh cho đèn, ray hoặc hậu. Tự động tính toán độ sâu và vị trí rãnh. Hỗ trợ nhiều kiểu rãnh khác nhau.</p>
-                        </article>
-                    </div>
-
-                    <div class="feature-row">
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="joint.svg" alt="Mộng liên kết">
-                            </div>
-                            <h3>Mộng liên kết</h3>
-                            <p>Tạo mộng liên kết ngang (mộng xương chó). Tích hợp tạo lỗ khoan mồi và gắn mộng âm tự động. Chính xác và nhanh chóng.</p>
-                        </article>
-                        
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="halved.svg" alt="Ngàm âm dương">
-                            </div>
-                            <h3>Ngàm âm dương</h3>
-                            <p>Khấu ngàm âm dương. Hỗ trợ cả các ván đã gắn nhãn và liên kết, và cả các ván xoay chéo.</p>
-                        </article>
-                    </div>
-
-                    <div class="feature-row">
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="overcut.svg" alt="Khử dao">
-                            </div>
-                            <h3>Khử dao</h3>
-                            <p>Thêm khử dao cho góc vuông lõm. Hỗ trợ chế độ thủ công và tự động. Cho phép chọn hình khử dao và kiểu khử dao.</p>
-                        </article>
-                        
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="trim.svg" alt="Khấu ván">
-                            </div>
-                            <h3>Khấu ván</h3>
-                            <p>Khấu hàng loạt không đổi tên ván. Hỗ trợ cả ván đã gắn liên kết hoặc gắn nhãn. Tự động chạy khử dao sau khi khấu.</p>
-                        </article>
-                    </div>
-
-                    <!-- Chức năng Custom -->
-                    <div class="feature-row">
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="bending.svg" alt="Đường xẻ rãnh">
-                            </div>
-                            <h3>Đường xẻ rãnh</h3>
-                            <p>Trải phẳng bề mặt cong và tạo đường xẻ rãnh để uốn cong ván. Tự động tính toán khoảng cách các đường cắt. Hỗ trợ thêm xương dưỡng tự động.</p>
-                        </article>
-                        
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="minifix.svg" alt="Minifix">
-                            </div>
-                            <h3>Minifix</h3>
-                            <p>Tạo Ốc Cam, Chốt Đợt, Khoan Mồi, Chốt Gỗ, Bản Lề. Giao diện trực quan với hình ảnh minh họa. Tự động tính toán vị trí lỗ khoan chính xác.</p>
-                        </article>
-                    </div>
-
-                    <div class="feature-row">
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="offset.svg" alt="Offset Edge">
-                            </div>
-                            <h3>Offset Edge</h3>
-                            <p>Offset cạnh và mặt với khoảng cách tùy chỉnh. Hỗ trợ offset vào trong hoặc ra ngoài. Tự động tạo face mới từ cạnh đã offset.</p>
-                        </article>
-                        
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="3point.svg" alt="Fast Panel">
-                            </div>
-                            <h3>Fast Panel</h3>
-                            <p>Vẽ tấm nhanh bằng 3 điểm hoặc từ face. Tự động tính toán độ dày và hướng tấm. Hỗ trợ tạo component tự động.</p>
-                        </article>
-                    </div>
-
-                    <div class="feature-row">
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="hit_panel.svg" alt="Copy Panel">
-                            </div>
-                            <h3>Copy Panel</h3>
-                            <p>Copy tấm theo hướng và khoảng cách. Hỗ trợ chế độ Phủ Bì và Mép Ngoài. Tự động phát hiện độ dày tấm gốc.</p>
-                        </article>
-                        
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="hut_mau.svg" alt="Material Suction">
-                            </div>
-                            <h3>Material Suction</h3>
-                            <p>Hút màu (Ctrl/Click đầu) và tô màu sang đối tượng khác. Nhanh chóng áp dụng material cho nhiều đối tượng cùng lúc.</p>
-                        </article>
-                    </div>
-
-                    <div class="feature-row">
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="hide_same.svg" alt="Ẩn cùng màu">
-                            </div>
-                            <h3>Ẩn/Chọn cùng màu</h3>
-                            <p>Ẩn hoặc chọn tất cả tấm ván có cùng màu với tấm đang chọn. Giúp quản lý và tổ chức model dễ dàng hơn.</p>
-                        </article>
-                        
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="cn_edge_offset.svg" alt="CN Edge Offset">
-                            </div>
-                            <h3>CN Edge Offset</h3>
-                            <p>Offset cạnh của tấm ván vào trong hoặc ra ngoài. Hỗ trợ offset nhiều cạnh cùng lúc với khoảng cách tùy chỉnh.</p>
-                        </article>
-                    </div>
-
-                    <div class="feature-row">
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="auto_naming.svg" alt="Đặt tên tự động">
-                            </div>
-                            <h3>Đặt tên tự động</h3>
-                            <p>Tự động đặt tên cho groups/components theo danh mục. Quản lý danh sách tên và số đếm. Giao diện trực quan dễ sử dụng.</p>
-                        </article>
-                        
-                        <article class="feature-item">
-                            <div class="feature-image">
-                                <img src="create_faces.svg" alt="Tạo Face">
-                            </div>
-                            <h3>Tạo Face & Pull Faces</h3>
-                            <p>Tạo face từ các edges đã chọn. Đẩy các faces đã chọn theo độ cao. Hỗ trợ tạo và chỉnh sửa geometry nhanh chóng.</p>
-                        </article>
-                    </div>
-                </div>
-
-                <div class="docs-link">
-                    <p>Xem chi tiết và hướng dẫn cụ thể tất cả các tính năng của phần mềm. <a href="#" class="link">Tài liệu &gt;</a></p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer role="contentinfo">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-col">
-                    <div class="footer-logo">
-                        <img src="logo.svg" alt="VietCNC">
-                    </div>
-                    <p class="footer-desc">Plugin SketchUp chuyên nghiệp cho thiết kế và sản xuất nội thất gỗ công nghiệp.</p>
-                    <div class="footer-social">
-                        <a href="#" aria-label="Facebook"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
-                        <a href="#" aria-label="YouTube"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23 9.71a8.5 8.5 0 00-.91-4.13 2.92 2.92 0 00-1.72-1A78.36 78.36 0 0012 4.27a78.45 78.45 0 00-8.34.3 2.87 2.87 0 00-1.46.74c-.9.83-1 2.25-1.1 3.45a48.29 48.29 0 000 6.48 9.55 9.55 0 00.3 2 3.14 3.14 0 00.71 1.36 2.86 2.86 0 001.49.78 45.18 45.18 0 006.5.33c3.5.05 6.57 0 10.2-.28a2.88 2.88 0 001.53-.78 2.49 2.49 0 00.61-1 10.58 10.58 0 00.52-3.4c.04-.56.04-3.94.04-4.54zM9.74 14.85V8.66l5.92 3.11c-1.66.92-3.85 1.96-5.92 3.08z"/></svg></a>
-                        <a href="#" aria-label="Zalo"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg></a>
-                    </div>
-                </div>
-                
-                <div class="footer-col">
-                    <h4>Sản phẩm</h4>
-                    <ul>
-                        <li><a href="#features">Tính năng</a></li>
-                        <li><a href="#pricing">Bảng giá</a></li>
-                        <li><a href="#download">Tải xuống</a></li>
-                        <li><a href="#">Hướng dẫn sử dụng</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-col">
-                    <h4>Hỗ trợ</h4>
-                    <ul>
-                        <li><a href="#">Tài liệu</a></li>
-                        <li><a href="#">Video hướng dẫn</a></li>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Liên hệ</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-col">
-                    <h4>Liên hệ</h4>
-                    <ul class="footer-contact">
-                        <li>📧 noithat371@gmail.com</li>
-                        <li>📱 Zalo/Hotline</li>
-                        <li>🌐 GitHub</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2026 VietCNC. All rights reserved.</p>
-                <div class="footer-links">
-                    <a href="#">Điều khoản</a>
-                    <a href="#">Chính sách</a>
-                </div>
-            </div>
+    <div class="container">
+        <h1>🏠 SketchUp 3D Viewer</h1>
+        <p class="subtitle">Quét QR hoặc chọn sản phẩm để xem mô hình 3D</p>
+        
+        <div class="models" id="modelsList">
+            <!-- Models sẽ được load từ JSON -->
         </div>
-    </footer>
+        
+        <footer>
+            Powered by GitHub Pages | Free Forever
+        </footer>
+    </div>
 
-    <script src="script.js"></script>
+    <script>
+        async function loadModels() {
+            try {
+                const response = await fetch('./api/models.json');
+                const models = await response.json();
+                
+                const container = document.getElementById('modelsList');
+                container.innerHTML = '';
+                
+                Object.values(models).forEach(model => {
+                    const card = document.createElement('div');
+                    card.className = 'model-card';
+                    card.onclick = () => viewModel(model.id);
+                    
+                    const partsCount = model.parts ? model.parts.length : 0;
+                    
+                    card.innerHTML = `
+                        <div class="model-name">${model.name}</div>
+                        <div class="model-code">${model.code}</div>
+                        <div class="model-info">
+                            <span>📐 ${model.size || 'N/A'}</span>
+                            <span>🔧 ${partsCount} chi tiết</span>
+                        </div>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+                
+            } catch (error) {
+                console.error('Lỗi load models:', error);
+                document.getElementById('modelsList').innerHTML = 
+                    '<p style="text-align:center;color:#999;">Chưa có sản phẩm nào</p>';
+            }
+        }
+        
+        function viewModel(id) {
+            window.location.href = `viewer.html?id=${id}`;
+        }
+        
+        // Load models khi trang load
+        loadModels();
+    </script>
 </body>
 </html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMA 3D Viewer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+        #container { 
+            width: 100vw; 
+            height: 100vh; 
+            position: relative;
+        }
+        #canvas { 
+            width: 100%; 
+            height: 100%; 
+            display: block;
+        }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            max-width: 300px;
+            z-index: 100;
+        }
+        #info h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        #info p {
+            color: #666;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        #partsList {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            max-width: 250px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        #partsList h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        .part-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .part-item:hover {
+            background: #f0f0f0;
+        }
+        .part-item.scanned {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        .part-item.active {
+            background: #fff3cd;
+            border-color: #ffc107;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .part-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .part-status {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .scan-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            font-size: 24px;
+        }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            padding: 15px 25px;
+            border-radius: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            display: flex;
+            gap: 15px;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+        #error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <canvas id="canvas"></canvas>
+        
+        <div id="loading">
+            <div class="spinner"></div>
+            <p>Đang tải mô hình 3D...</p>
+        </div>
+        
+        <div id="info" style="display:none;">
+            <h2 id="modelName">Tên sản phẩm</h2>
+            <p><strong>Mã:</strong> <span id="modelCode">-</span></p>
+            <p><strong>Kích thước:</strong> <span id="modelSize">-</span></p>
+            <p><strong>Ngày tạo:</strong> <span id="modelDate">-</span></p>
+        </div>
+        
+        <div id="partsList" style="display:none;">
+            <h3>📋 Danh sách chi tiết</h3>
+            <div id="partsContainer"></div>
+        </div>
+        
+        <div id="controls" style="display:none;">
+            <button class="btn" onclick="resetCamera()">🔄 Reset</button>
+            <button class="btn" onclick="toggleWireframe()">📐 Wireframe</button>
+            <button class="btn" onclick="takeScreenshot()">📷 Chụp ảnh</button>
+        </div>
+        
+        <div id="error">
+            <h2 style="color: #e74c3c;">❌ Lỗi</h2>
+            <p id="errorMsg">Không tìm thấy dữ liệu</p>
+            <button class="btn" onclick="location.reload()">Thử lại</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, mesh, controls;
+        let isWireframe = false;
+        let partMeshes = [];  // Lưu từng tấm riêng biệt
+        let currentHighlightedPart = null;
+        let scannedParts = new Set();  // Lưu các tấm đã quét
+
+        // Lấy ID từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const modelId = urlParams.get('id');
+        const partId = urlParams.get('part');  // ID tấm đang quét
+
+        if (!modelId) {
+            showError('Thiếu mã QR! Vui lòng quét lại.');
+        } else {
+            loadModel(modelId);
+        }
+
+        async function loadModel(id) {
+            try {
+                // Đọc trực tiếp từ models.json (GitHub Pages - static)
+                const response = await fetch('../api/models.json');
+                const models = await response.json();
+                
+                const data = models[id];
+                
+                if (!data) {
+                    throw new Error('Không tìm thấy model: ' + id);
+                }
+
+                // Hiển thị thông tin
+                document.getElementById('modelName').textContent = data.name || 'Sản phẩm';
+                document.getElementById('modelCode').textContent = data.code || id;
+                document.getElementById('modelSize').textContent = data.size || '-';
+                document.getElementById('modelDate').textContent = new Date(data.created_at).toLocaleDateString('vi-VN');
+                document.getElementById('info').style.display = 'block';
+
+                // Render 3D với parts
+                init3D(data.vertices, data.faces, data.parts);
+                
+                // Hiển thị danh sách parts
+                if (data.parts && data.parts.length > 0) {
+                    renderPartsList(data.parts);
+                    document.getElementById('partsList').style.display = 'block';
+                }
+                
+                // Highlight tấm đang quét (nếu có)
+                if (partId) {
+                    highlightPart(partId);
+                    markPartAsScanned(partId);
+                }
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('controls').style.display = 'flex';
+
+            } catch (error) {
+                console.error(error);
+                showError(error.message);
+            }
+        }
+
+        function init3D(vertices, faces, parts) {
+            // Setup Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f0f0);
+
+            // Setup Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0, 5);
+
+            // Setup Renderer
+            const canvas = document.getElementById('canvas');
+            renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+
+            // Nếu có parts (từng tấm riêng), render từng tấm
+            if (parts && parts.length > 0) {
+                parts.forEach((part, index) => {
+                    const geometry = new THREE.BufferGeometry();
+                    
+                    // Vertices của tấm này
+                    const positions = new Float32Array(part.vertices.flat());
+                    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                    
+                    // Faces của tấm này
+                    const indices = new Uint16Array(part.faces.flat());
+                    geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+                    
+                    geometry.computeVertexNormals();
+
+                    // Material mặc định
+                    const material = new THREE.MeshPhongMaterial({
+                        color: 0x8B4513,
+                        side: THREE.DoubleSide,
+                        flatShading: false,
+                        transparent: true,
+                        opacity: 1.0
+                    });
+
+                    const partMesh = new THREE.Mesh(geometry, material);
+                    partMesh.castShadow = true;
+                    partMesh.receiveShadow = true;
+                    partMesh.userData = { partId: part.id, partName: part.name };
+                    
+                    scene.add(partMesh);
+                    partMeshes.push(partMesh);
+                });
+            } else {
+                // Fallback: Render toàn bộ như 1 mesh
+                const geometry = new THREE.BufferGeometry();
+                
+                const positions = new Float32Array(vertices.flat());
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                
+                const indices = new Uint16Array(faces.flat());
+                geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+                
+                geometry.computeVertexNormals();
+
+                const material = new THREE.MeshPhongMaterial({
+                    color: 0x8B4513,
+                    side: THREE.DoubleSide,
+                    flatShading: false
+                });
+
+                mesh = new THREE.Mesh(geometry, material);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                scene.add(mesh);
+            }
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 7.5);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            // Grid
+            const gridHelper = new THREE.GridHelper(10, 10);
+            scene.add(gridHelper);
+
+            // Controls (Mouse)
+            setupControls();
+
+            // Animation Loop
+            animate();
+
+            // Resize Handler
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function setupControls() {
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            const canvas = document.getElementById('canvas');
+
+            canvas.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (isDragging && mesh) {
+                    const deltaX = e.clientX - previousMousePosition.x;
+                    const deltaY = e.clientY - previousMousePosition.y;
+
+                    mesh.rotation.y += deltaX * 0.01;
+                    mesh.rotation.x += deltaY * 0.01;
+
+                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                }
+            });
+
+            canvas.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            // Touch support
+            canvas.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                previousMousePosition = { 
+                    x: e.touches[0].clientX, 
+                    y: e.touches[0].clientY 
+                };
+            });
+
+            canvas.addEventListener('touchmove', (e) => {
+                if (isDragging && mesh) {
+                    const deltaX = e.touches[0].clientX - previousMousePosition.x;
+                    const deltaY = e.touches[0].clientY - previousMousePosition.y;
+
+                    mesh.rotation.y += deltaX * 0.01;
+                    mesh.rotation.x += deltaY * 0.01;
+
+                    previousMousePosition = { 
+                        x: e.touches[0].clientX, 
+                        y: e.touches[0].clientY 
+                    };
+                }
+            });
+
+            canvas.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+
+            // Zoom with wheel
+            canvas.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                camera.position.z += e.deltaY * 0.01;
+                camera.position.z = Math.max(2, Math.min(20, camera.position.z));
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function resetCamera() {
+            camera.position.set(0, 0, 5);
+            if (mesh) {
+                mesh.rotation.set(0, 0, 0);
+            }
+        }
+
+        function toggleWireframe() {
+            if (mesh) {
+                isWireframe = !isWireframe;
+                mesh.material.wireframe = isWireframe;
+            }
+        }
+
+        function takeScreenshot() {
+            const link = document.createElement('a');
+            link.download = `model_${modelId}.png`;
+            link.href = renderer.domElement.toDataURL();
+            link.click();
+        }
+
+        function showError(msg) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('errorMsg').textContent = msg;
+        }
+
+        // ============================================
+        // HIGHLIGHT PARTS (Tấm sáng lên)
+        // ============================================
+
+        function highlightPart(partId) {
+            // Reset highlight cũ
+            if (currentHighlightedPart) {
+                currentHighlightedPart.material.emissive.setHex(0x000000);
+                currentHighlightedPart.material.opacity = 1.0;
+            }
+
+            // Tìm tấm cần highlight
+            const partMesh = partMeshes.find(m => m.userData.partId === partId);
+            
+            if (partMesh) {
+                // Làm sáng lên (emissive glow)
+                partMesh.material.emissive.setHex(0xffff00);  // Vàng
+                partMesh.material.emissiveIntensity = 0.5;
+                
+                // Nhấp nháy
+                let intensity = 0.5;
+                let direction = -1;
+                const blinkInterval = setInterval(() => {
+                    intensity += direction * 0.1;
+                    if (intensity <= 0.2 || intensity >= 0.8) {
+                        direction *= -1;
+                    }
+                    partMesh.material.emissiveIntensity = intensity;
+                }, 100);
+
+                // Dừng nhấp nháy sau 3 giây
+                setTimeout(() => {
+                    clearInterval(blinkInterval);
+                    partMesh.material.emissive.setHex(0x00ff00);  // Xanh lá (đã quét)
+                    partMesh.material.emissiveIntensity = 0.3;
+                }, 3000);
+
+                currentHighlightedPart = partMesh;
+
+                // Zoom camera vào tấm này
+                const box = new THREE.Box3().setFromObject(partMesh);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+                
+                camera.position.set(center.x, center.y, center.z + size.length() * 1.5);
+                camera.lookAt(center);
+            }
+        }
+
+        function markPartAsScanned(partId) {
+            scannedParts.add(partId);
+            
+            // Cập nhật UI
+            const partItem = document.querySelector(`[data-part-id="${partId}"]`);
+            if (partItem) {
+                partItem.classList.add('scanned');
+                partItem.querySelector('.part-status').textContent = '✅ Đã quét';
+            }
+        }
+
+        function renderPartsList(parts) {
+            const container = document.getElementById('partsContainer');
+            container.innerHTML = '';
+
+            parts.forEach(part => {
+                const div = document.createElement('div');
+                div.className = 'part-item';
+                div.setAttribute('data-part-id', part.id);
+                
+                const isScanned = scannedParts.has(part.id);
+                if (isScanned) {
+                    div.classList.add('scanned');
+                }
+                if (part.id === partId) {
+                    div.classList.add('active');
+                }
+
+                div.innerHTML = `
+                    <div class="part-name">${part.name}</div>
+                    <div class="part-status">${isScanned ? '✅ Đã quét' : '⏳ Chưa quét'}</div>
+                `;
+
+                div.onclick = () => {
+                    highlightPart(part.id);
+                };
+
+                container.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
