@@ -95,6 +95,24 @@
             font-size: 11px;
             font-weight: bold;
         }
+        .btn-scan {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            width: 100%;
+            max-width: 300px;
+        }
+        .btn-scan:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
         footer {
             text-align: center;
             margin-top: 30px;
@@ -107,6 +125,12 @@
     <div class="container">
         <h1>🏠 SketchUp 3D Viewer</h1>
         <p class="subtitle">Quét QR hoặc chọn sản phẩm để xem mô hình 3D</p>
+        
+        <div style="margin-bottom: 20px;">
+            <button class="btn-scan" onclick="window.location.href='qr-scanner.html'">
+                📷 Quét QR Code
+            </button>
+        </div>
         
         <div class="models" id="modelsList">
             <!-- Models sẽ được load từ JSON -->
