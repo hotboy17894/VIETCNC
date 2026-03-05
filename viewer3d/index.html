@@ -145,6 +145,14 @@
         async function loadModels() {
             try {
                 const response = await fetch('./api/models.json');
+                
+                // Kiểm tra response có phải JSON không
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    console.error('Response không phải JSON:', contentType);
+                    throw new Error('File models.json không tồn tại hoặc chưa upload');
+                }
+                
                 const models = await response.json();
                 
                 const container = document.getElementById('modelsList');
@@ -172,7 +180,9 @@
             } catch (error) {
                 console.error('Lỗi load models:', error);
                 document.getElementById('modelsList').innerHTML = 
-                    '<p style="text-align:center;color:#999;">Chưa có sản phẩm nào</p>';
+                    '<p style="text-align:center;color:#999;">Chưa có sản phẩm nào.<br><br>' +
+                    'Vui lòng upload lên GitHub:<br>' +
+                    '<code>cd webvietcnc && upload_viewer3d.bat</code></p>';
             }
         }
         

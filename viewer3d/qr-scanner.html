@@ -256,40 +256,66 @@
         function handleQRCode(data) {
             console.log('QR Code detected:', data);
             
-            // Kiểm tra xem có phải URL của viewer không
-            if (data.includes('viewer.html') || data.includes('MODEL_')) {
-                updateStatus('✅ Quét thành công! Đang chuyển hướng...', 'success');
-                
-                // Dừng quét
-                stopScanning();
-                
-                // Chuyển hướng sau 1 giây
+            // Dừng quét
+            stopScanning();
+            
+            // Kiểm tra loại QR và xử lý
+            // 1. URL viewer đầy đủ
+            if (data.includes('viewer.html') || data.includes('viewer3d')) {
+                updateStatus('✅ Quét thành công! Đang mở 3D viewer...', 'success');
                 setTimeout(() => {
-                    // Nếu là URL đầy đủ
-                    if (data.startsWith('http')) {
-                        window.location.href = data;
-                    } 
-                    // Nếu chỉ là model ID
-                    else if (data.startsWith('MODEL_')) {
-                        window.location.href = `viewer.html?id=${data}`;
-                    }
-                    // Nếu là URL tương đối
-                    else {
-                        window.location.href = data;
-                    }
+                    window.location.href = data;
                 }, 1000);
-            } else {
-                updateStatus('⚠️ Mã QR không hợp lệ! Vui lòng quét mã QR của 3D Viewer.', 'error');
-                
-                // Tiếp tục quét sau 2 giây
-                setTimeout(() => {
-                    if (!scanning) {
-                        scanning = true;
-                        updateStatus('Đang quét... Hướng camera vào mã QR', 'info');
-                        requestAnimationFrame(scan);
-                    }
-                }, 2000);
             }
+            // 2. Model ID (MODEL_xxx)
+            else if (data.startsWith('MODEL_')) {
+                updateStatus('✅ Quét thành công! Đang mở model...', 'success');
+                setTimeout(() => {
+                    window.location.href = `viewer.html?id=${data}`;
+                }, 1000);
+            }
+            // 3. URL khác
+            else if (data.startsWith('http://') || data.startsWith('https://')) {
+                updateStatus('✅ Quét thành công!\n\nURL: ' + data, 'success');
+                if (confirm('Mở link này trong tab mới?\n\n' + data)) {
+                    window.open(data, '_blank');
+                }
+            }
+            // 4. Nội dung text/số bất kỳ
+            else {
+                showQRContent(data);
+            }
+        }
+
+        function showQRContent(content) {
+            updateStatus('✅ Quét thành công!', 'success');
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'success';
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <h3 style="margin-bottom: 10px;">📋 Nội dung QR Code:</h3>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0; word-break: break-all; text-align: left;">
+                    <code style="font-size: 14px;">${escapeHtml(content)}</code>
+                </div>
+                <button class="btn" onclick="copyToClipboard('${escapeHtml(content)}')">📋 Copy</button>
+                <button class="btn" onclick="location.reload()">🔄 Quét lại</button>
+            `;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Đã copy vào clipboard!');
+            }).catch(err => {
+                console.error('Lỗi copy:', err);
+                alert('❌ Không thể copy. Vui lòng copy thủ công.');
+            });
         }
 
         function updateStatus(message, type) {
