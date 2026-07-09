@@ -316,6 +316,7 @@ a {
 
 .section-head p:not(.eyebrow),
 .preview-copy p,
+.finance-app p,
 .production p,
 .download p {
   color: var(--muted);
@@ -368,6 +369,53 @@ a {
 
 .features {
   background: var(--mist);
+}
+
+.finance-app {
+  background: #ffffff;
+  border-bottom: 1px solid var(--line);
+}
+
+.finance-app-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.finance-app h2 {
+  max-width: 680px;
+  margin: 0;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.finance-app-panel {
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+  box-shadow: var(--shadow);
+}
+
+.finance-app-panel span {
+  display: block;
+  color: var(--cyan-dark);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.finance-app-panel strong {
+  display: block;
+  margin-top: 8px;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1;
+}
+
+.finance-app-panel p {
+  margin: 14px 0 18px;
 }
 
 .feature-grid {
@@ -572,6 +620,7 @@ a {
   }
 
   .preview-layout,
+  .finance-app-layout,
   .production-grid,
   .download-layout {
     grid-template-columns: 1fr;

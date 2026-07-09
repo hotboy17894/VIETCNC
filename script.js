@@ -102,7 +102,7 @@ function setupSmoothAnchors() {
 }
 
 function setupReveal() {
-  const elements = document.querySelectorAll('.timeline article, .feature-card, .preview-copy, .preview-figure, .spec-list div, .download-panel');
+  const elements = document.querySelectorAll('.timeline article, .feature-card, .finance-app-layout > div, .preview-copy, .preview-figure, .spec-list div, .download-panel');
   elements.forEach((element) => element.classList.add('reveal'));
 
   if (!('IntersectionObserver' in window)) {
