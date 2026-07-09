@@ -1,106 +1,129 @@
-// Cấu hình link tải - CẬP NHẬT LINK TẢI Ở ĐÂY
 const DOWNLOAD_LINK = 'https://raw.githubusercontent.com/hotboy17894/VIETCNC/main/webvietcnc/vietcnc.rbz';
 const UPDATE_JSON_URL = 'https://raw.githubusercontent.com/hotboy17894/VIETCNC/main/webvietcnc/update.json';
 
-// Hàm chuyển đổi ngày từ YYYY-MM-DD sang DD/MM/YYYY
 function formatDate(dateString) {
-    const parts = dateString.split('-');
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  if (!dateString || !dateString.includes('-')) return 'Đang cập nhật';
+  const [year, month, day] = dateString.split('-');
+  return `${day}/${month}/${year}`;
 }
 
-// Hàm tải thông tin version từ update.json
+function setText(id, value) {
+  const element = document.getElementById(id);
+  if (element) element.textContent = value;
+}
+
+function setDate(id, value) {
+  const element = document.getElementById(id);
+  if (!element) return;
+  element.textContent = formatDate(value);
+  element.setAttribute('datetime', value || '');
+}
+
+function applyReleaseInfo(data) {
+  const version = data.version || '2026';
+  const releaseDate = data.release_date || '';
+  const minSketchUp = data.min_sketchup_version || '2021';
+  const maxSketchUp = data.max_sketchup_version || '2025';
+  const downloadUrl = data.download_url || DOWNLOAD_LINK;
+
+  setText('current-version', version);
+  setText('panel-version', version);
+  setDate('release-date', releaseDate);
+  setText('panel-date', formatDate(releaseDate));
+  setText('sketchup-range', `${minSketchUp} - ${maxSketchUp}`);
+
+  document.querySelectorAll('a[href*="vietcnc.rbz"]').forEach((link) => {
+    link.href = downloadUrl;
+    link.setAttribute('aria-label', `Tải VietNT phiên bản ${version}`);
+  });
+}
+
 async function loadVersionInfo() {
-    try {
-        const response = await fetch(UPDATE_JSON_URL);
-        const data = await response.json();
-        
-        // Cập nhật version
-        const versionElement = document.getElementById('current-version');
-        if (versionElement) {
-            versionElement.textContent = data.version;
-        }
-        
-        // Cập nhật ngày
-        const dateElement = document.getElementById('release-date');
-        if (dateElement) {
-            dateElement.textContent = formatDate(data.release_date);
-            dateElement.setAttribute('datetime', data.release_date);
-        }
-        
-        // Cập nhật aria-label của nút download
-        const downloadBtn = document.getElementById('downloadBtn');
-        if (downloadBtn) {
-            downloadBtn.setAttribute('aria-label', `Tải xuống VietCNC phiên bản ${data.version}`);
-        }
-        
-        console.log('✓ Đã tải thông tin version:', data.version);
-    } catch (error) {
-        console.error('Lỗi khi tải thông tin version:', error);
-        // Nếu lỗi, hiển thị thông tin mặc định
-        const versionElement = document.getElementById('current-version');
-        const dateElement = document.getElementById('release-date');
-        if (versionElement) versionElement.textContent = '3.2.6';
-        if (dateElement) dateElement.textContent = '28/01/2026';
-    }
+  const fallback = {
+    version: '3.2.6',
+    release_date: '2026-02-14',
+    min_sketchup_version: '2021',
+    max_sketchup_version: '2025',
+    download_url: DOWNLOAD_LINK
+  };
+
+  try {
+    const response = await fetch(`${UPDATE_JSON_URL}?t=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    applyReleaseInfo({ ...fallback, ...data });
+  } catch (error) {
+    const localData = await loadLocalReleaseInfo();
+    applyReleaseInfo(localData ? { ...fallback, ...localData } : fallback);
+  }
 }
 
-// Xử lý sự kiện click nút tải
-document.addEventListener('DOMContentLoaded', function() {
-    // Tải thông tin version
-    loadVersionInfo();
-    
-    const downloadBtn = document.getElementById('downloadBtn');
-    
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Thay đổi link tải ở đây
-            window.location.href = DOWNLOAD_LINK;
-            
-            // Hoặc mở trong tab mới
-            // window.open(DOWNLOAD_LINK, '_blank');
-        });
+async function loadLocalReleaseInfo() {
+  const candidates = ['webvietcnc/update.json', 'update.json'];
+  for (const path of candidates) {
+    try {
+      const response = await fetch(path, { cache: 'no-store' });
+      if (!response.ok) continue;
+      return await response.json();
+    } catch (_error) {
+      continue;
     }
-    
-    // Smooth scroll cho các link anchor
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-});
+  }
+  return null;
+}
 
-// Animation khi scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
+function setupNavigation() {
+  const toggle = document.querySelector('.nav-toggle');
+  const links = document.querySelector('.nav-links');
+  if (!toggle || !links) return;
 
-const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
+  toggle.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
 
-// Áp dụng animation cho các phần tử
-document.addEventListener('DOMContentLoaded', function() {
-    const animatedElements = document.querySelectorAll('.feature-card, .feature-item');
-    
-    animatedElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
+  links.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      links.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
     });
+  });
+}
+
+function setupSmoothAnchors() {
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', (event) => {
+      const target = document.querySelector(anchor.getAttribute('href'));
+      if (!target) return;
+      event.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+function setupReveal() {
+  const elements = document.querySelectorAll('.timeline article, .feature-card, .preview-copy, .preview-figure, .spec-list div, .download-panel');
+  elements.forEach((element) => element.classList.add('reveal'));
+
+  if (!('IntersectionObserver' in window)) {
+    elements.forEach((element) => element.classList.add('visible'));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.14 });
+
+  elements.forEach((element) => observer.observe(element));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadVersionInfo();
+  setupNavigation();
+  setupSmoothAnchors();
+  setupReveal();
 });
